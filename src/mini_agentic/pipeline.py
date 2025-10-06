@@ -11,17 +11,26 @@ from .tools import CSVTool, HTTPTool
 class PipelineConfig:
     kb_path: str
     data_path: str
-    model: str = "gpt-4o-mini"
+    model: str = "azure/gpt-5-mini"
     echo: bool = False
     temperature: float = 0.2
     max_steps: int = 6
+    # Proxy configuration (optional; will read env defaults in LLMClient)
+    proxy_base_url: str | None = None
+    proxy_api_key: str | None = None
 
 
 class AgentPipeline:
     def __init__(self, config: PipelineConfig):
         self.config = config
         self.kb = KnowledgeBase(config.kb_path)
-        self.llm = LLMClient(model=config.model, temperature=config.temperature, echo=config.echo)
+        self.llm = LLMClient(
+            model=config.model,
+            temperature=config.temperature,
+            echo=config.echo,
+            base_url=config.proxy_base_url,
+            api_key=config.proxy_api_key,
+        )
         self.csv_tool = CSVTool(config.data_path)
         self.http_tool = HTTPTool()
 

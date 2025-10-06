@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 import os
 
@@ -18,13 +18,29 @@ class LLMResponse:
 
 
 class LLMClient:
-    def __init__(self, model: str, temperature: float = 0.2, echo: bool = False):
+    def __init__(
+        self,
+        model: str,
+        temperature: float = 0.2,
+        echo: bool = False,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ):
         self.model = model
         self.temperature = temperature
         self.echo = echo
+        # Resolve proxy configuration with environment and safe defaults
+        self.base_url = base_url or os.getenv("PROXY_LLM_BASE_URL", "https://proxyllm.ximplify.id")
+        self.api_key = api_key or os.getenv("PROXY_LLM_API_KEY", "sk-1ZD9lcxMClJfD9AZC6_Kxg")
+
         self._client = None
         if not echo and OpenAI is not None:
-            self._client = OpenAI()
+            # Configure OpenAI client to use the proxy-compatible Chat Completions API
+            self._client = OpenAI(base_url=self.base_url, api_key=self.api_key)
+        elif not echo and OpenAI is None:
+            raise RuntimeError(
+                "openai package is not available. Install it or run with --echo."
+            )
 
     def complete(self, messages: List[Dict[str, str]]) -> LLMResponse:
         if self.echo or self._client is None:

@@ -10,10 +10,14 @@ An AI-driven mini agentic pipeline that retrieves knowledge from a small knowled
   mini-agent --echo "What does this project do?"
   ```
 
-- Run with OpenAI (set `OPENAI_API_KEY`):
-  
+- Run with the proxy (default):
+  - Defaults baked into the client:
+    - Base URL: `https://proxyllm.ximplify.id`
+    - Model: `azure/gpt-5-mini`
+    - API key can come from env `PROXY_LLM_API_KEY` or CLI flag
+
   ```bash
-  export OPENAI_API_KEY=sk-... 
+  export PROXY_LLM_API_KEY="sk-1ZD9lcxMClJfD9AZC6_Kxg"
   mini-agent "Summarize the demo KB"
   ```
 
@@ -36,3 +40,20 @@ mini-agent --help
   ```bash
   mini-agent --echo "Fetch JSON from https://api.github.com and summarize"
   ```
+
+## Test snippet: run against the proxy
+
+```bash
+export PROXY_LLM_API_KEY="sk-1ZD9lcxMClJfD9AZC6_Kxg"
+mini-agent "Explain AI agent architecture"
+```
+
+You can override defaults:
+
+```bash
+mini-agent \
+  --model "azure/gpt-5-mini" \
+  --proxy-base-url "https://proxyllm.ximplify.id" \
+  --proxy-api-key "$PROXY_LLM_API_KEY" \
+  "Explain AI agent architecture"
+```
