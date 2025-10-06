@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 
 import os
+import httpx
 
 try:
     from openai import OpenAI
@@ -35,8 +36,17 @@ class LLMClient:
 
         self._client = None
         if not echo and OpenAI is not None:
-            # Configure OpenAI client to use the proxy-compatible Chat Completions API
-            self._client = OpenAI(base_url=self.base_url, api_key=self.api_key)
+            # Configure OpenAI client with a custom httpx client that ignores env proxies
+            self._http_client = httpx.Client(
+                timeout=60.0,
+                follow_redirects=True,
+                trust_env=False,
+            )
+            self._client = OpenAI(
+                base_url=self.base_url,
+                api_key=self.api_key,
+                http_client=self._http_client,
+            )
         elif not echo and OpenAI is None:
             raise RuntimeError(
                 "openai package is not available. Install it or run with --echo."
