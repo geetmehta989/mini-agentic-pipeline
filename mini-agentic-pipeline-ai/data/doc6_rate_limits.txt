@@ -1,0 +1,4 @@
+Rate limits by plan:
+- Free: 60 requests/min
+- Pro: 600 requests/min
+- Business: 6000 requests/min

@@ -1,0 +1,1 @@
+Security features include SSO (Business), audit logs (Business), and role-based access control (all plans).
