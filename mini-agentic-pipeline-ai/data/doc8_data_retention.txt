@@ -1,0 +1,1 @@
+Data retention policy: logs retained for 30 days on Free, 90 days on Pro, 365 days on Business. Audit logs (Business) can be exported.

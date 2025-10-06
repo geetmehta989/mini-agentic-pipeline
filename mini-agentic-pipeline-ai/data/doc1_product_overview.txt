@@ -1,0 +1,1 @@
+Our product offers three plans: Free, Pro, and Business. All plans include core features like basic analytics and email support. Pro adds API access and higher rate limits. Business includes SSO, audit logs, and priority support.

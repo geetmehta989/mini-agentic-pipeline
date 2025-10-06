@@ -1,0 +1,4 @@
+Feature matrix by plan:
+- Free: basic analytics, email support
+- Pro: everything in Free + API access, higher rate limits
+- Business: everything in Pro + SSO, audit logs, priority support
