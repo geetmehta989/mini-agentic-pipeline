@@ -1,0 +1,2 @@
+[console_scripts]
+mini-agent = mini_agentic.cli:app
