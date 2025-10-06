@@ -1,7 +1,11 @@
 import argparse
 import json
 import os
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover
+    def load_dotenv() -> None:  # type: ignore
+        return None
 
 from modules.controller import Controller
 

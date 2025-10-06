@@ -3,7 +3,11 @@ import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover
+    def load_dotenv() -> None:  # type: ignore
+        return None
 try:
     from openai import OpenAI
 except Exception:  # pragma: no cover

@@ -6,8 +6,15 @@ try:
     import faiss  # type: ignore
 except Exception:  # pragma: no cover - optional dependency at runtime
     faiss = None  # type: ignore
-import numpy as np
-from dotenv import load_dotenv
+try:
+    import numpy as np  # type: ignore
+except Exception:  # pragma: no cover
+    np = None  # type: ignore
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover
+    def load_dotenv() -> None:  # type: ignore
+        return None
 try:
     from openai import OpenAI
 except Exception:  # pragma: no cover
@@ -40,7 +47,7 @@ class Retriever:
                 self.offline_mode = True
         else:
             self.offline_mode = True
-        if faiss is None:
+        if faiss is None or np is None:
             # If FAISS not available, force offline simple retrieval
             self.offline_mode = True
         self._offline_tokens: List[set[str]] = []
@@ -78,20 +85,20 @@ class Retriever:
                 self.texts.append(chunk)
                 self.metadatas.append({"source": d["source"]})
 
-    def _embed_texts(self, texts: List[str]) -> np.ndarray:
+    def _embed_texts(self, texts: List[str]):
         assert self.client is not None, "OpenAI client not initialized"
         resp = self.client.embeddings.create(model="text-embedding-3-small", input=texts)
         vectors = [item.embedding for item in resp.data]
-        vectors_np = np.array(vectors, dtype="float32")
-        if faiss is not None:
+        vectors_np = np.array(vectors, dtype="float32") if np is not None else vectors  # type: ignore
+        if faiss is not None and np is not None:
             faiss.normalize_L2(vectors_np)
         return vectors_np
 
-    def _embed_query(self, query: str) -> np.ndarray:
+    def _embed_query(self, query: str):
         assert self.client is not None, "OpenAI client not initialized"
         resp = self.client.embeddings.create(model="text-embedding-3-small", input=[query])
-        q = np.array([resp.data[0].embedding], dtype="float32")
-        if faiss is not None:
+        q = np.array([resp.data[0].embedding], dtype="float32") if np is not None else [resp.data[0].embedding]  # type: ignore
+        if faiss is not None and np is not None:
             faiss.normalize_L2(q)
         return q
 
@@ -106,10 +113,10 @@ class Retriever:
             self.index = "offline"
         else:
             vectors_np = self._embed_texts(self.texts)
-            dim = int(vectors_np.shape[1])
-            assert faiss is not None
+            assert faiss is not None and np is not None
+            dim = int(vectors_np.shape[1])  # type: ignore[index]
             index = faiss.IndexFlatIP(dim)
-            index.add(vectors_np)
+            index.add(vectors_np)  # type: ignore[arg-type]
             self.index = index
 
     def search(self, query: str, k: int = 5) -> List[RetrievedDocument]:
@@ -132,7 +139,7 @@ class Retriever:
         else:
             q = self._embed_query(query)
             assert faiss is not None
-            scores, idxs = self.index.search(q, k)
+            scores, idxs = self.index.search(q, k)  # type: ignore[arg-type]
             for score, idx in zip(scores[0], idxs[0]):
                 if idx == -1:
                     continue
