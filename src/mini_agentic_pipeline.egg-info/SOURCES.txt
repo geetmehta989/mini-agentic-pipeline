@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+src/mini_agentic/__init__.py
+src/mini_agentic/cli.py
+src/mini_agentic/kb.py
+src/mini_agentic/llm.py
+src/mini_agentic/pipeline.py
+src/mini_agentic/tools/__init__.py
+src/mini_agentic/tools/csv_tool.py
+src/mini_agentic_pipeline.egg-info/PKG-INFO
+src/mini_agentic_pipeline.egg-info/SOURCES.txt
+src/mini_agentic_pipeline.egg-info/dependency_links.txt
+src/mini_agentic_pipeline.egg-info/entry_points.txt
+src/mini_agentic_pipeline.egg-info/requires.txt
+src/mini_agentic_pipeline.egg-info/top_level.txt
