@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import httpx
 
 
@@ -12,8 +12,19 @@ class HTTPToolResult:
 
 
 class HTTPTool:
-    def __init__(self, timeout_sec: float = 10.0):
-        self._client = httpx.Client(timeout=timeout_sec, follow_redirects=True)
+    def __init__(
+        self,
+        timeout_sec: float = 10.0,
+        trust_env: bool = False,
+        proxies: Optional[httpx._client.ProxyTypes] = None,
+    ):
+        # trust_env=False prevents crashes when HTTPS_PROXY/HTTP_PROXY are set to placeholder values
+        self._client = httpx.Client(
+            timeout=timeout_sec,
+            follow_redirects=True,
+            trust_env=trust_env,
+            proxies=proxies,
+        )
 
     def get(self, url: str, headers: Dict[str, str] | None = None) -> HTTPToolResult:
         resp = self._client.get(url, headers=headers)

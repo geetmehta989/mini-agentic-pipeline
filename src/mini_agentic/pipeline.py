@@ -32,7 +32,8 @@ class AgentPipeline:
             api_key=config.proxy_api_key,
         )
         self.csv_tool = CSVTool(config.data_path)
-        self.http_tool = HTTPTool()
+        # Disable env proxy by default to avoid invalid proxy variables crashing on Windows
+        self.http_tool = HTTPTool(trust_env=False)
 
     def run(self, question: str) -> tuple[str, List[Dict[str, Any]]]:
         trace: List[Dict[str, Any]] = []
